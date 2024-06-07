@@ -6,7 +6,7 @@ let selectedPuzzles = [];
 let exportMode = false;
 
 function init() {
-  let pupusa = "https://api.apify.com/v2/acts/lukaskrivka~google-sheets/runs/last/key-value-store/records/OUTPUT?token=rWE";
+  let pupusa = "https://api.apify.com/v2/actor-tasks/hol~strangehousingdb/runs/last/key-value-store/records/OUTPUT?token=rWE";
   pupusa += "3PGPKfe";
   pupusa += "hDW7Myr9PE3pmZq";
   fetch(pupusa)

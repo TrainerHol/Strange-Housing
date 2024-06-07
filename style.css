@@ -17,6 +17,7 @@ body {
   margin-top: 2%;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
 }
 
 h1 {
@@ -30,6 +31,28 @@ h1 {
   border-radius: 5px 5px 0px 0px;
 }
 
+.discord-id-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.discord-id-container span {
+  margin-right: 10px;
+  color: #e2e2e2;
+}
+
+.discord-id-container button {
+  background-color: #ad9462;
+  color: #272527;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
 .info-card {
   background-color: #2d2b2d;
   border: 2px solid #ad9462;
@@ -41,6 +64,10 @@ h1 {
 
 .info-card.selected {
   background-color: #3d3b3d;
+}
+
+.info-card.cleared {
+  background-color: #304530;
 }
 
 .info-card h3 {
@@ -132,5 +159,20 @@ h1 {
 .close:focus {
   color: #e2e2e2;
   text-decoration: none;
+  cursor: pointer;
+}
+
+#discordIdModal input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+#discordIdModal button {
+  background-color: #ad9462;
+  color: #272527;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
   cursor: pointer;
 }

@@ -4,8 +4,12 @@ let puzzleData = [];
 let filteredData = [];
 let selectedPuzzles = [];
 let exportMode = false;
+let discordId = localStorage.getItem("discordId") || "";
+let clearData = [];
 
 function init() {
+  updateDiscordIdDisplay();
+
   let pupusa = "https://api.apify.com/v2/actor-tasks/hol~strangehousingdb/runs/last/key-value-store/records/OUTPUT?token=rWE";
   pupusa += "3PGPKfe";
   pupusa += "hDW7Myr9PE3pmZq";
@@ -23,6 +27,25 @@ function init() {
     .catch((error) => {
       console.error("Error fetching data:", error);
     });
+
+  fetchClearData();
+}
+
+function fetchClearData() {
+  let tamal = "https://api.apify.com/v2/actor-tasks/hol~strangehousingclears/runs/last/key-value-store/records/OUTPUT?token=rWE";
+  tamal += "3PGPKfehDW7Myr9";
+  tamal += "PE3pmZq";
+  if (discordId) {
+    fetch(tamal)
+      .then((response) => response.json())
+      .then((data) => {
+        clearData = data.filter((clear) => clear.jumper === discordId);
+        displayData(filteredData);
+      })
+      .catch((error) => {
+        console.error("Error fetching clear data:", error);
+      });
+  }
 }
 
 function filterData() {
@@ -71,6 +94,9 @@ function displayData(data) {
   data.forEach((puzzle) => {
     const infoCard = document.createElement("div");
     infoCard.className = "info-card";
+    if (clearData.some((clear) => clear.puzzle === puzzle.ID)) {
+      infoCard.classList.add("cleared");
+    }
     infoCard.innerHTML = `
       <h3>${puzzle["Puzzle Name"]} by ${puzzle.Builder} ${getStarRating(puzzle.Rating)} [${getTags(puzzle)}]</h3>
       ${puzzle["Goals/Rules"] ? `<p><strong>Goals/Rules:</strong> ${puzzle["Goals/Rules"]}</p>` : ""}
@@ -93,6 +119,34 @@ function displayData(data) {
     checkboxes.forEach((checkbox) => {
       checkbox.addEventListener("change", handlePuzzleSelection);
     });
+  }
+}
+
+function openDiscordIdModal() {
+  const modal = document.getElementById("discordIdModal");
+  modal.style.display = "block";
+}
+
+function closeDiscordIdModal() {
+  const modal = document.getElementById("discordIdModal");
+  modal.style.display = "none";
+}
+
+function saveDiscordId() {
+  const input = document.getElementById("discordIdInput");
+  discordId = input.value.trim();
+  localStorage.setItem("discordId", discordId);
+  updateDiscordIdDisplay();
+  closeDiscordIdModal();
+  fetchClearData();
+}
+
+function updateDiscordIdDisplay() {
+  const discordIdDisplay = document.getElementById("discordIdDisplay");
+  if (discordId) {
+    discordIdDisplay.textContent = `Discord ID: ${discordId}`;
+  } else {
+    discordIdDisplay.textContent = "";
   }
 }
 

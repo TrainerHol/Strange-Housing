@@ -8,6 +8,10 @@
   <body onload="init()">
     <div class="container">
       <h1>FFXIV Jump Puzzle Listings</h1>
+      <div class="discord-id-container">
+        <span id="discordIdDisplay"></span>
+        <button onclick="openDiscordIdModal()">Set Discord ID</button>
+      </div>
 
       <div class="filters">
         <div>
@@ -61,6 +65,15 @@
         <h2>Daily Roulette</h2>
         <div id="modalContent"></div>
         <button onclick="copyToClipboard()">Copy to Clipboard</button>
+      </div>
+    </div>
+
+    <div id="discordIdModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeDiscordIdModal()">&times;</span>
+        <h2>Set Discord ID</h2>
+        <input type="text" id="discordIdInput" placeholder="Enter your Discord ID" />
+        <button onclick="saveDiscordId()">Save</button>
       </div>
     </div>
   </body>

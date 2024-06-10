@@ -94,7 +94,7 @@ function displayData(data) {
   data.forEach((puzzle) => {
     const infoCard = document.createElement("div");
     infoCard.className = "info-card";
-    if (clearData.some((clear) => clear.puzzle === puzzle.ID)) {
+    if (clearData.some((clear) => clear.puzzle.padStart(5, "0") === puzzle.ID)) {
       infoCard.classList.add("cleared");
     }
     infoCard.innerHTML = `

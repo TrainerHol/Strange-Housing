@@ -105,7 +105,7 @@ function displayData(data) {
         <span class="puzzle-id">${puzzle.ID}</span>
         <div class="action-buttons">
           <div class="action-button jump-button" data-puzzle-id="${puzzle.ID}" data-tooltip="Copy clear command"></div>
-          <div class="action-button sprint-button" data-puzzle-id="${puzzle.ID}" data-world="${puzzle.World}" data-address="${puzzle.Address}" data-tooltip="Copy lifestream command"></div>
+          <div class="action-button sprint-button" data-puzzle-id="${puzzle.ID}" data-world="${puzzle.World}" data-district="${puzzle.District}" data-ward="${puzzle.Ward}" data-plot="${puzzle.Plot}" data-room="${puzzle.Room}" data-tooltip="Copy lifestream command"></div>
         </div>
       </div>
       ${exportMode ? `<div class="checkbox-container"><input type="checkbox" data-puzzle-id="${puzzle.ID}"></div>` : ""}
@@ -407,21 +407,19 @@ function handleJumpButtonClick(event) {
 
 function handleSprintButtonClick(event) {
   const world = event.target.dataset.world;
-  const address = event.target.dataset.address;
+  const district = event.target.dataset.district;
+  const ward = event.target.dataset.ward;
+  const plot = event.target.dataset.plot;
+  const room = event.target.dataset.room;
   let lifeStreamCommand = "";
 
-  const districtMatch = address.match(/(Mist|Lavender Beds|The Goblet|Shirogane|Empyreum)/);
-  const district = districtMatch ? districtMatch[1].toLowerCase().replace(/\s+/g, "") : "";
-
-  if (address.includes("Plot")) {
-    const [ward, plot] = address.match(/Ward (\d+), Plot (\d+)/).slice(1);
+  if (plot === "A1" || plot === "A2") {
+    // This is an apartment
+    const isSubdivision = plot === "A2";
+    lifeStreamCommand = `/li ${world} ${district} w${ward}${isSubdivision ? " s" : ""} a${room}`;
+  } else if (plot && plot !== "-") {
+    // This is a house plot
     lifeStreamCommand = `/li ${world} ${district} w${ward} p${plot}`;
-  } else if (address.includes("Wing 1")) {
-    const apartment = address.match(/Apartment (\d+)/)[1];
-    lifeStreamCommand = `/li ${world} ${district} a${apartment}`;
-  } else if (address.includes("Wing 2")) {
-    const apartment = address.match(/Apartment (\d+)/)[1];
-    lifeStreamCommand = `/li ${world} ${district} s a${apartment}`;
   }
 
   copyToClipboard(lifeStreamCommand);

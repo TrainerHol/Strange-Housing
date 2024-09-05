@@ -62,6 +62,9 @@ h1 {
   padding: 10px;
   margin-bottom: 10px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 30px; /* Ensure space for footer */
 }
 
 .info-card.selected {
@@ -91,9 +94,6 @@ h1 {
 }
 
 .puzzle-id {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
   font-size: 0.8em;
   color: #ad9462;
 }
@@ -177,4 +177,54 @@ h1 {
   border-radius: 3px;
   padding: 5px 10px;
   cursor: pointer;
+}
+
+.card-footer {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.action-button {
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.action-button:hover {
+  opacity: 1;
+}
+
+.jump-button {
+  background-image: url("img/jump.png");
+}
+
+.sprint-button {
+  background-image: url("img/sprint.png");
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #ad9462;
+  color: #272527;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
 }

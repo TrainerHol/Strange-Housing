@@ -101,7 +101,13 @@ function displayData(data) {
       <h3>${puzzle["Puzzle Name"]} by ${puzzle.Builder} ${getStarRating(puzzle.Rating)} [${getTags(puzzle)}]</h3>
       ${puzzle["Goals/Rules"] ? `<p><strong>Goals/Rules:</strong> ${puzzle["Goals/Rules"]}</p>` : ""}
       <p>${puzzle.Datacenter}, ${puzzle.World} - ${puzzle.Address}</p>
-      <span class="puzzle-id">${puzzle.ID}</span>
+      <div class="card-footer">
+        <span class="puzzle-id">${puzzle.ID}</span>
+        <div class="action-buttons">
+          <div class="action-button jump-button" data-puzzle-id="${puzzle.ID}" data-tooltip="Copy clear command"></div>
+          <div class="action-button sprint-button" data-puzzle-id="${puzzle.ID}" data-world="${puzzle.World}" data-address="${puzzle.Address}" data-tooltip="Copy lifestream command"></div>
+        </div>
+      </div>
       ${exportMode ? `<div class="checkbox-container"><input type="checkbox" data-puzzle-id="${puzzle.ID}"></div>` : ""}
     `;
     container.appendChild(infoCard);
@@ -120,6 +126,22 @@ function displayData(data) {
       checkbox.addEventListener("change", handlePuzzleSelection);
     });
   }
+
+  // Add event listeners for the new buttons
+  const jumpButtons = document.querySelectorAll(".jump-button");
+  const sprintButtons = document.querySelectorAll(".sprint-button");
+
+  jumpButtons.forEach((button) => {
+    button.addEventListener("click", handleJumpButtonClick);
+    button.addEventListener("mouseenter", showTooltip);
+    button.addEventListener("mouseleave", hideTooltip);
+  });
+
+  sprintButtons.forEach((button) => {
+    button.addEventListener("click", handleSprintButtonClick);
+    button.addEventListener("mouseenter", showTooltip);
+    button.addEventListener("mouseleave", hideTooltip);
+  });
 }
 
 function openDiscordIdModal() {
@@ -375,6 +397,56 @@ function copySelectedPuzzleIds() {
   document.execCommand("copy");
   document.body.removeChild(tempElement);
   //alert("Selected puzzle IDs copied to clipboard!");
+}
+
+function handleJumpButtonClick(event) {
+  const puzzleId = event.target.dataset.puzzleId;
+  const clearCommand = `/clear puzzleids: ${puzzleId}`;
+  copyToClipboard(clearCommand);
+}
+
+function handleSprintButtonClick(event) {
+  const world = event.target.dataset.world;
+  const address = event.target.dataset.address;
+  let lifeStreamCommand = "";
+
+  const districtMatch = address.match(/(Mist|Lavender Beds|The Goblet|Shirogane|Empyreum)/);
+  const district = districtMatch ? districtMatch[1].toLowerCase().replace(/\s+/g, "") : "";
+
+  if (address.includes("Plot")) {
+    const [ward, plot] = address.match(/Ward (\d+), Plot (\d+)/).slice(1);
+    lifeStreamCommand = `/li ${world} ${district} w${ward} p${plot}`;
+  } else if (address.includes("Wing 1")) {
+    const apartment = address.match(/Apartment (\d+)/)[1];
+    lifeStreamCommand = `/li ${world} ${district} a${apartment}`;
+  } else if (address.includes("Wing 2")) {
+    const apartment = address.match(/Apartment (\d+)/)[1];
+    lifeStreamCommand = `/li ${world} ${district} s a${apartment}`;
+  }
+
+  copyToClipboard(lifeStreamCommand);
+}
+
+function copyToClipboard(text) {
+  const tempElement = document.createElement("textarea");
+  tempElement.value = text;
+  document.body.appendChild(tempElement);
+  tempElement.select();
+  document.execCommand("copy");
+  document.body.removeChild(tempElement);
+}
+
+function showTooltip(event) {
+  const tooltip = document.getElementById("tooltip");
+  tooltip.textContent = event.target.dataset.tooltip;
+  tooltip.style.left = `${event.pageX + 10}px`;
+  tooltip.style.top = `${event.pageY + 10}px`;
+  tooltip.style.opacity = 1;
+}
+
+function hideTooltip() {
+  const tooltip = document.getElementById("tooltip");
+  tooltip.style.opacity = 0;
 }
 
 window.onclick = function (event) {

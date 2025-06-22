@@ -1,0 +1,3 @@
+[submodule "sh-dump"]
+	path = sh-dump
+	url = https://github.com/TrainerHol/sh-dump

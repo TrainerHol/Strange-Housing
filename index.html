@@ -15,7 +15,14 @@
         </div>
       </h1>
 
-      <div class="filters">
+      <div class="tabs">
+        <button class="tab-button active" onclick="switchTab('search')">Search</button>
+        <button class="tab-button" onclick="switchTab('hub')">Hub Mode</button>
+        <button class="tab-button" onclick="switchTab('lists')">Lists</button>
+      </div>
+
+      <div id="searchTab" class="tab-content">
+        <div class="filters">
         <div>
           <label for="minRating">Min Rating:</label>
           <input type="range" id="minRating" min="1" max="5" value="1" oninput="applyFilters()" />
@@ -49,16 +56,64 @@
 
         <div>
           <button onclick="generateDailyRoulette()">Daily Roulette</button>
-          <button id="exportModeButton" onclick="toggleExportMode()">Enable Export Mode</button>
+          <button id="exportModeButton" onclick="toggleExportMode()">Enable Selection Mode</button>
           <div id="exportButtons" style="display: none">
             <button onclick="clearSelection()">Clear Selection</button>
-            <button onclick="copySelectedPuzzleIds()">Copy</button>
+            <button onclick="copySelectedPuzzleIds()">Copy IDs</button>
+            <button onclick="createListFromSelection()">Create List</button>
           </div>
           <span id="puzzlesFound" class="puzzles-found"></span>
         </div>
       </div>
 
       <div id="puzzleContainer"></div>
+      </div>
+
+      <div id="hubModeTab" class="tab-content" style="display: none;">
+        <div class="hub-filters">
+          <div class="hub-dropdowns">
+            <div class="hub-dropdown-group">
+              <label for="hubWorld">World:</label>
+              <select id="hubWorld" onchange="updateHubDistricts()">
+                <option value="">Select a world</option>
+              </select>
+            </div>
+            <div class="hub-dropdown-group">
+              <label for="hubDistrict">District:</label>
+              <select id="hubDistrict" onchange="updateHubWards()">
+                <option value="">Select a district</option>
+              </select>
+            </div>
+            <div class="hub-dropdown-group">
+              <label for="hubWard">Ward:</label>
+              <select id="hubWard" onchange="filterByHub()">
+                <option value="">Select a ward</option>
+              </select>
+            </div>
+          </div>
+          <div class="hub-controls">
+            <button id="hubExportModeButton" onclick="toggleExportMode()">Enable Selection Mode</button>
+            <div id="hubExportButtons" style="display: none">
+              <button onclick="clearSelection()">Clear Selection</button>
+              <button onclick="copySelectedPuzzleIds()">Copy IDs</button>
+              <button onclick="createListFromSelection()">Create List</button>
+            </div>
+            <span id="hubPuzzlesFound" class="puzzles-found"></span>
+          </div>
+        </div>
+        <div id="hubPuzzleContainer"></div>
+      </div>
+
+      <div id="listsTab" class="tab-content" style="display: none;">
+        <div class="lists-header">
+          <h2>Your Lists</h2>
+          <div class="lists-header-buttons">
+            <button onclick="importListFromClipboard()">Import from Clipboard</button>
+            <button onclick="exportAllLists()">Export All</button>
+          </div>
+        </div>
+        <div id="listsContainer"></div>
+      </div>
     </div>
 
     <div id="rouletteModal" class="modal">
@@ -76,6 +131,19 @@
         <h2>Set Discord ID</h2>
         <input type="text" id="discordIdInput" placeholder="Enter your Discord ID" />
         <button onclick="saveDiscordId()">Save</button>
+      </div>
+    </div>
+
+    <div id="listCreationModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeListCreationModal()">&times;</span>
+        <h2>Create New List</h2>
+        <p id="listCreationDescription" style="color: #ad9462;"></p>
+        <input type="text" id="listNameInput" placeholder="Enter a name for your list" maxlength="50" />
+        <div class="modal-buttons">
+          <button class="cancel-button" onclick="closeListCreationModal()">Cancel</button>
+          <button onclick="saveNewList()">Create List</button>
+        </div>
       </div>
     </div>
 

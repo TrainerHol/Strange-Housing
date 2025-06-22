@@ -143,7 +143,7 @@ function createPuzzleCard(puzzle) {
   return infoCard;
 }
 
-function createPuzzleListItem(puzzle) {
+function createPuzzleListItem(puzzle, listName = null) {
   const listItem = document.createElement("div");
   listItem.className = "list-item";
   if (isPuzzleCleared(puzzle.ID)) {
@@ -153,6 +153,8 @@ function createPuzzleListItem(puzzle) {
   const tags = getTags(puzzle);
   const tagsDisplay = tags ? ` [${tags}]` : '';
   
+  const deleteButton = listName ? `<button class="list-item-delete" onclick="removePuzzleFromList('${listName}', '${puzzle.ID}')" data-tooltip="Remove from list">×</button>` : '';
+  
   listItem.innerHTML = `
     <div class="list-item-info">
       ${getStarRating(puzzle.Rating)} ${puzzle.PuzzleName} by ${puzzle.Builder}${tagsDisplay} (${puzzle.Datacenter}, ${puzzle.World} - ${puzzle.Address})
@@ -161,6 +163,7 @@ function createPuzzleListItem(puzzle) {
       <div class="action-button copy-button" data-puzzle="${JSON.stringify(puzzle).replace(/"/g, '&quot;')}" data-tooltip="Copy formatted text"></div>
       <div class="action-button jump-button" data-puzzle-id="${puzzle.ID}" data-tooltip="Copy clear command"></div>
       <div class="action-button sprint-button" data-puzzle-id="${puzzle.ID}" data-world="${puzzle.World}" data-district="${puzzle.District}" data-ward="${puzzle.Ward}" data-plot="${puzzle.Plot}" data-room="${puzzle.Room}" data-tooltip="Copy lifestream command"></div>
+      ${deleteButton}
     </div>
   `;
   
@@ -419,14 +422,20 @@ function toggleExportMode() {
   const searchExportButtons = document.getElementById("exportButtons");
   const hubExportButton = document.getElementById("hubExportModeButton");
   const hubExportButtons = document.getElementById("hubExportButtons");
+  const addToListButton = document.getElementById("addToListButton");
+  const hubAddToListButton = document.getElementById("hubAddToListButton");
   
   const buttonText = exportMode ? "Disable Selection Mode" : "Enable Selection Mode";
   const buttonsDisplay = exportMode ? "inline-block" : "none";
+  const hasLists = Object.keys(lists).length > 0;
+  const addToListDisplay = exportMode && hasLists ? "inline-block" : "none";
   
   searchExportButton.textContent = buttonText;
   searchExportButtons.style.display = buttonsDisplay;
   hubExportButton.textContent = buttonText;
   hubExportButtons.style.display = buttonsDisplay;
+  addToListButton.style.display = addToListDisplay;
+  hubAddToListButton.style.display = addToListDisplay;
   
   // Refresh current tab display
   if (currentTab === "search") {
@@ -527,11 +536,14 @@ function hideTooltip() {
 window.onclick = function (event) {
   const rouletteModal = document.getElementById("rouletteModal");
   const listCreationModal = document.getElementById("listCreationModal");
+  const addToListModal = document.getElementById("addToListModal");
   
   if (event.target === rouletteModal) {
     closeModal();
   } else if (event.target === listCreationModal) {
     closeListCreationModal();
+  } else if (event.target === addToListModal) {
+    closeAddToListModal();
   }
 };
 
@@ -748,7 +760,7 @@ function displayLists() {
     list.puzzleIds.forEach((puzzleId) => {
       const puzzle = puzzleData.find(p => p.ID === puzzleId);
       if (puzzle) {
-        const listItem = createPuzzleListItem(puzzle);
+        const listItem = createPuzzleListItem(puzzle, listName);
         listItems.appendChild(listItem);
       }
     });
@@ -1002,6 +1014,91 @@ function parseJSONFormat(text) {
   return false;
 }
 
+function showAddToListModal() {
+  if (selectedPuzzles.length === 0) {
+    showNotification("No puzzles selected. Please select some puzzles first.", "error");
+    return;
+  }
+  
+  const modal = document.getElementById("addToListModal");
+  const description = document.getElementById("addToListDescription");
+  const container = document.getElementById("existingListsContainer");
+  
+  description.textContent = `Add ${selectedPuzzles.length} selected puzzle${selectedPuzzles.length === 1 ? '' : 's'} to an existing list:`;
+  container.innerHTML = "";
+  
+  const listNames = Object.keys(lists);
+  listNames.forEach((listName) => {
+    const list = lists[listName];
+    const listItem = document.createElement("div");
+    listItem.className = "existing-list-item";
+    listItem.innerHTML = `
+      <div class="existing-list-info">
+        <h4>${listName}</h4>
+        <p>${list.puzzleIds.length} puzzles</p>
+      </div>
+    `;
+    
+    listItem.addEventListener("click", () => {
+      addToExistingList(listName);
+    });
+    
+    container.appendChild(listItem);
+  });
+  
+  modal.style.display = "block";
+}
+
+function closeAddToListModal() {
+  const modal = document.getElementById("addToListModal");
+  modal.style.display = "none";
+}
+
+function addToExistingList(listName) {
+  const list = lists[listName];
+  if (!list) return;
+  
+  // Add selected puzzles that aren't already in the list
+  const newPuzzles = selectedPuzzles.filter(id => !list.puzzleIds.includes(id));
+  
+  if (newPuzzles.length === 0) {
+    showNotification("All selected puzzles are already in this list", "error");
+    return;
+  }
+  
+  list.puzzleIds.push(...newPuzzles);
+  localStorage.setItem("puzzleLists", JSON.stringify(lists));
+  
+  showNotification(`Added ${newPuzzles.length} puzzle${newPuzzles.length === 1 ? '' : 's'} to "${listName}"`, "success");
+  clearSelection();
+  closeAddToListModal();
+  
+  if (currentTab === 'lists') {
+    displayLists();
+  }
+}
+
+function removePuzzleFromList(listName, puzzleId) {
+  const list = lists[listName];
+  if (!list) return;
+  
+  const index = list.puzzleIds.indexOf(puzzleId);
+  if (index !== -1) {
+    list.puzzleIds.splice(index, 1);
+    
+    // If list is empty, delete it
+    if (list.puzzleIds.length === 0) {
+      delete lists[listName];
+      showNotification(`List "${listName}" was empty and has been deleted`, "success");
+    } else {
+      showNotification("Puzzle removed from list", "success");
+    }
+    
+    localStorage.setItem("puzzleLists", JSON.stringify(lists));
+    displayLists();
+  }
+}
+
 // Make functions accessible globally for onclick
 window.deleteList = deleteList;
 window.closeListCreationModal = closeListCreationModal;
@@ -1009,3 +1106,6 @@ window.saveNewList = saveNewList;
 window.copyList = copyList;
 window.exportAllLists = exportAllLists;
 window.importListFromClipboard = importListFromClipboard;
+window.showAddToListModal = showAddToListModal;
+window.closeAddToListModal = closeAddToListModal;
+window.removePuzzleFromList = removePuzzleFromList;

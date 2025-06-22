@@ -454,6 +454,56 @@ h1 {
   max-width: 400px;
 }
 
+#addToListModal .modal-content {
+  max-width: 500px;
+}
+
+.existing-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 8px 0;
+  background-color: #2d2b2d;
+  border: 1px solid #ad9462;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.existing-list-item:hover {
+  background-color: #3d3b3d;
+}
+
+.existing-list-info {
+  color: #ad9462;
+}
+
+.existing-list-info h4 {
+  margin: 0;
+  color: #e2e2e2;
+}
+
+.existing-list-info p {
+  margin: 5px 0 0 0;
+  font-size: 0.9em;
+}
+
+.list-item-delete {
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.8em;
+  margin-left: 10px;
+}
+
+.list-item-delete:hover {
+  background-color: #b71c1c;
+}
+
 #rouletteModal .modal-content {
   max-width: 700px;
 }

@@ -61,6 +61,7 @@
             <button onclick="clearSelection()">Clear Selection</button>
             <button onclick="copySelectedPuzzleIds()">Copy IDs</button>
             <button onclick="createListFromSelection()">Create List</button>
+            <button id="addToListButton" onclick="showAddToListModal()" style="display: none">Add to List</button>
           </div>
           <span id="puzzlesFound" class="puzzles-found"></span>
         </div>
@@ -97,6 +98,7 @@
               <button onclick="clearSelection()">Clear Selection</button>
               <button onclick="copySelectedPuzzleIds()">Copy IDs</button>
               <button onclick="createListFromSelection()">Create List</button>
+              <button id="hubAddToListButton" onclick="showAddToListModal()" style="display: none">Add to List</button>
             </div>
             <span id="hubPuzzlesFound" class="puzzles-found"></span>
           </div>
@@ -143,6 +145,18 @@
         <div class="modal-buttons">
           <button class="cancel-button" onclick="closeListCreationModal()">Cancel</button>
           <button onclick="saveNewList()">Create List</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="addToListModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeAddToListModal()">&times;</span>
+        <h2>Add to Existing List</h2>
+        <p id="addToListDescription" style="color: #ad9462;"></p>
+        <div id="existingListsContainer"></div>
+        <div class="modal-buttons">
+          <button class="cancel-button" onclick="closeAddToListModal()">Cancel</button>
         </div>
       </div>
     </div>

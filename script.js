@@ -10,10 +10,7 @@ let clearData = [];
 function init() {
   updateDiscordIdDisplay();
 
-  let pupusa = "https://api.apify.com/v2/actor-tasks/hol~strangehousingdb/runs/last/key-value-store/records/OUTPUT?token=rWE";
-  pupusa += "3PGPKfe";
-  pupusa += "hDW7Myr9PE3pmZq";
-  fetch(pupusa)
+  fetch("sh-dump/puzzles.json")
     .then((response) => response.json())
     .then((data) => {
       puzzleData = data.filter((puzzle) => puzzle.ID !== "00000" && puzzle.Datacenter !== "-" && puzzle.Datacenter !== "");
@@ -32,11 +29,8 @@ function init() {
 }
 
 function fetchClearData() {
-  let tamal = "https://api.apify.com/v2/actor-tasks/hol~strangehousingclears/runs/last/key-value-store/records/OUTPUT?token=rWE";
-  tamal += "3PGPKfehDW7Myr9";
-  tamal += "PE3pmZq";
   if (discordId) {
-    fetch(tamal)
+    fetch("sh-dump/clears.json")
       .then((response) => response.json())
       .then((data) => {
         clearData = data.filter((clear) => clear.jumper === discordId);
@@ -60,7 +54,7 @@ function filterData() {
   return puzzleData.filter((puzzle) => {
     const rating = isNaN(parseInt(puzzle.Rating)) ? 1 : parseInt(puzzle.Rating);
     const builderMatch = puzzle.Builder.toLowerCase().includes(searchQuery);
-    const puzzleNameMatch = puzzle["Puzzle Name"].toLowerCase().includes(searchQuery);
+    const puzzleNameMatch = puzzle.PuzzleName.toLowerCase().includes(searchQuery);
     const excludeMatch = !excludeQuery || !puzzle.Builder.toLowerCase().includes(excludeQuery);
     const datacenterMatch = selectedDatacenters.length === 0 || selectedDatacenters.includes(puzzle.Datacenter);
     const districtMatch = selectedDistricts.length === 0 || selectedDistricts.includes(puzzle.District);
@@ -77,7 +71,7 @@ function sortData() {
 
   filteredData.sort((a, b) => {
     if (sortBy === "name") {
-      return sortOrder === "asc" ? a["Puzzle Name"].localeCompare(b["Puzzle Name"]) : b["Puzzle Name"].localeCompare(a["Puzzle Name"]);
+      return sortOrder === "asc" ? a.PuzzleName.localeCompare(b.PuzzleName) : b.PuzzleName.localeCompare(a.PuzzleName);
     } else if (sortBy === "rating") {
       const ratingA = isNaN(parseInt(a.Rating)) ? 1 : parseInt(a.Rating);
       const ratingB = isNaN(parseInt(b.Rating)) ? 1 : parseInt(b.Rating);
@@ -94,12 +88,12 @@ function displayData(data) {
   data.forEach((puzzle) => {
     const infoCard = document.createElement("div");
     infoCard.className = "info-card";
-    if (clearData.some((clear) => clear.puzzle.padStart(5, "0") === puzzle.ID)) {
+    if (clearData.some((clear) => clear.puzzleId === puzzle.ID)) {
       infoCard.classList.add("cleared");
     }
     infoCard.innerHTML = `
-      <h3>${puzzle["Puzzle Name"]} by ${puzzle.Builder} ${getStarRating(puzzle.Rating)} [${getTags(puzzle)}]</h3>
-      ${puzzle["Goals/Rules"] ? `<p><strong>Goals/Rules:</strong> ${puzzle["Goals/Rules"]}</p>` : ""}
+      <h3>${puzzle.PuzzleName} by ${puzzle.Builder} ${getStarRating(puzzle.Rating)} [${getTags(puzzle)}]</h3>
+      ${puzzle.GoalsRules && puzzle.GoalsRules !== "-" ? `<p><strong>Goals/Rules:</strong> ${puzzle.GoalsRules}</p>` : ""}
       <p>${puzzle.Datacenter}, ${puzzle.World} - ${puzzle.Address}</p>
       <div class="card-footer">
         <span class="puzzle-id">${puzzle.ID}</span>
@@ -309,8 +303,8 @@ function displayRouletteModal(puzzles) {
     const puzzleElement = document.createElement("div");
     puzzleElement.className = "info-card";
     puzzleElement.innerHTML = `
-      <h3>${puzzle["Puzzle Name"]} by ${puzzle.Builder} ${getStarRating(puzzle.Rating)} [${getTags(puzzle)}]</h3>
-      ${puzzle["Goals/Rules"] ? `<p><strong>Goals/Rules:</strong> ${puzzle["Goals/Rules"]}</p>` : ""}
+      <h3>${puzzle.PuzzleName} by ${puzzle.Builder} ${getStarRating(puzzle.Rating)} [${getTags(puzzle)}]</h3>
+      ${puzzle.GoalsRules && puzzle.GoalsRules !== "-" ? `<p><strong>Goals/Rules:</strong> ${puzzle.GoalsRules}</p>` : ""}
       <p>${puzzle.Datacenter}, ${puzzle.World} - ${puzzle.Address}</p>
     `;
     modalContent.appendChild(puzzleElement);

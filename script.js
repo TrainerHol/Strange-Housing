@@ -8,6 +8,7 @@ let discordId = localStorage.getItem("discordId") || "";
 let clearData = [];
 let currentTab = "search";
 let lists = JSON.parse(localStorage.getItem("puzzleLists") || "{}");
+let searchDebounceTimer = null;
 
 function init() {
   updateDiscordIdDisplay();
@@ -86,13 +87,14 @@ function filterData() {
     const rating = isNaN(parseInt(puzzle.Rating)) ? 1 : parseInt(puzzle.Rating);
     const builderMatch = puzzle.Builder.toLowerCase().includes(searchQuery);
     const puzzleNameMatch = puzzle.PuzzleName.toLowerCase().includes(searchQuery);
+    const idMatch = puzzle.ID.includes(searchQuery);
     const excludeMatch = !excludeQuery || !puzzle.Builder.toLowerCase().includes(excludeQuery);
     const datacenterMatch = selectedDatacenters.length === 0 || selectedDatacenters.includes(puzzle.Datacenter);
     const districtMatch = selectedDistricts.length === 0 || selectedDistricts.includes(puzzle.District);
     const ratingMatch = rating >= minRating && rating <= maxRating;
     const tagMatch = selectedTags.length === 0 || selectedTags.every((tag) => puzzle[tag] || puzzle[tag] === "+");
 
-    return puzzle.Status === "Active" && ratingMatch && (builderMatch || puzzleNameMatch) && excludeMatch && datacenterMatch && districtMatch && tagMatch;
+    return puzzle.Status === "Active" && ratingMatch && (builderMatch || puzzleNameMatch || idMatch) && excludeMatch && datacenterMatch && districtMatch && tagMatch;
   });
 }
 
@@ -327,6 +329,13 @@ function createTagToggles() {
 function applyFilters() {
   filteredData = filterData();
   sortData();
+}
+
+function debouncedApplyFilters() {
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => {
+    applyFilters();
+  }, 300);
 }
 
 function updatePuzzlesFound() {

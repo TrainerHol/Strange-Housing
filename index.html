@@ -32,8 +32,8 @@
           </div>
 
           <div>
-            <input type="text" id="searchInput" placeholder="Search by builder or puzzle name" oninput="applyFilters()" />
-            <input type="text" id="excludeInput" placeholder="Exclude builder" oninput="applyFilters()" />
+            <input type="text" id="searchInput" placeholder="Search [Builder/Name/ID]" oninput="debouncedApplyFilters()" />
+            <input type="text" id="excludeInput" placeholder="Exclude builder" oninput="debouncedApplyFilters()" />
           </div>
 
           <div>

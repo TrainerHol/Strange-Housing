@@ -23,54 +23,55 @@
 
       <div id="searchTab" class="tab-content">
         <div class="filters">
-        <div>
-          <label for="minRating">Min Rating:</label>
-          <input type="range" id="minRating" min="1" max="5" value="1" oninput="applyFilters()" />
+          <div>
+            <label for="minRating">Min Rating:</label>
+            <input type="range" id="minRating" min="1" max="5" value="1" oninput="applyFilters()" />
 
-          <label for="maxRating">Max Rating:</label>
-          <input type="range" id="maxRating" min="1" max="5" value="5" oninput="applyFilters()" />
-        </div>
-
-        <div>
-          <input type="text" id="searchInput" placeholder="Search by builder or puzzle name" oninput="applyFilters()" />
-          <input type="text" id="excludeInput" placeholder="Exclude builder" oninput="applyFilters()" />
-        </div>
-
-        <div>
-          <label for="sortBy">Sort By:</label>
-          <select id="sortBy" onchange="applyFilters()">
-            <option value="name">Puzzle Name</option>
-            <option value="rating">Rating</option>
-          </select>
-
-          <label for="sortOrder">Sort Order:</label>
-          <select id="sortOrder" onchange="applyFilters()">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
-        </div>
-
-        <div id="toggleContainer"></div>
-        <div id="districtToggleContainer"></div>
-        <div id="tagToggleContainer"></div>
-
-        <div>
-          <button onclick="generateDailyRoulette()">Daily Roulette</button>
-          <button id="exportModeButton" onclick="toggleExportMode()">Enable Selection Mode</button>
-          <div id="exportButtons" style="display: none">
-            <button onclick="clearSelection()">Clear Selection</button>
-            <button onclick="copySelectedPuzzleIds()">Copy IDs</button>
-            <button onclick="createListFromSelection()">Create List</button>
-            <button id="addToListButton" onclick="showAddToListModal()" style="display: none">Add to List</button>
+            <label for="maxRating">Max Rating:</label>
+            <input type="range" id="maxRating" min="1" max="5" value="5" oninput="applyFilters()" />
           </div>
-          <span id="puzzlesFound" class="puzzles-found"></span>
+
+          <div>
+            <input type="text" id="searchInput" placeholder="Search by builder or puzzle name" oninput="applyFilters()" />
+            <input type="text" id="excludeInput" placeholder="Exclude builder" oninput="applyFilters()" />
+          </div>
+
+          <div>
+            <label for="sortBy">Sort By:</label>
+            <select id="sortBy" onchange="applyFilters()">
+              <option value="name">Puzzle Name</option>
+              <option value="rating">Rating</option>
+              <option value="id">Puzzle ID</option>
+            </select>
+
+            <label for="sortOrder">Sort Order:</label>
+            <select id="sortOrder" onchange="applyFilters()">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+
+          <div id="toggleContainer"></div>
+          <div id="districtToggleContainer"></div>
+          <div id="tagToggleContainer"></div>
+
+          <div>
+            <button onclick="generateDailyRoulette()">Daily Roulette</button>
+            <button id="exportModeButton" onclick="toggleExportMode()">Enable Selection Mode</button>
+            <div id="exportButtons" style="display: none">
+              <button onclick="clearSelection()">Clear Selection</button>
+              <button onclick="copySelectedPuzzleIds()">Copy IDs</button>
+              <button onclick="createListFromSelection()">Create List</button>
+              <button id="addToListButton" onclick="showAddToListModal()" style="display: none">Add to List</button>
+            </div>
+            <span id="puzzlesFound" class="puzzles-found"></span>
+          </div>
         </div>
+
+        <div id="puzzleContainer"></div>
       </div>
 
-      <div id="puzzleContainer"></div>
-      </div>
-
-      <div id="hubModeTab" class="tab-content" style="display: none;">
+      <div id="hubModeTab" class="tab-content" style="display: none">
         <div class="hub-filters">
           <div class="hub-dropdowns">
             <div class="hub-dropdown-group">
@@ -106,7 +107,7 @@
         <div id="hubPuzzleContainer"></div>
       </div>
 
-      <div id="listsTab" class="tab-content" style="display: none;">
+      <div id="listsTab" class="tab-content" style="display: none">
         <div class="lists-header">
           <h2>Your Lists</h2>
           <div class="lists-header-buttons">
@@ -140,7 +141,7 @@
       <div class="modal-content">
         <span class="close" onclick="closeListCreationModal()">&times;</span>
         <h2>Create New List</h2>
-        <p id="listCreationDescription" style="color: #ad9462;"></p>
+        <p id="listCreationDescription" style="color: #ad9462"></p>
         <input type="text" id="listNameInput" placeholder="Enter a name for your list" maxlength="50" />
         <div class="modal-buttons">
           <button class="cancel-button" onclick="closeListCreationModal()">Cancel</button>
@@ -153,7 +154,7 @@
       <div class="modal-content">
         <span class="close" onclick="closeAddToListModal()">&times;</span>
         <h2>Add to Existing List</h2>
-        <p id="addToListDescription" style="color: #ad9462;"></p>
+        <p id="addToListDescription" style="color: #ad9462"></p>
         <div id="existingListsContainer"></div>
         <div class="modal-buttons">
           <button class="cancel-button" onclick="closeAddToListModal()">Cancel</button>

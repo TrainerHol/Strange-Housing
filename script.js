@@ -36,25 +36,25 @@ function init() {
 
 function switchTab(tabName) {
   currentTab = tabName;
-  
+
   // Update tab buttons
-  document.querySelectorAll('.tab-button').forEach(btn => {
-    btn.classList.remove('active');
+  document.querySelectorAll(".tab-button").forEach((btn) => {
+    btn.classList.remove("active");
   });
-  event.target.classList.add('active');
-  
+  event.target.classList.add("active");
+
   // Hide all tabs
-  document.getElementById('searchTab').style.display = 'none';
-  document.getElementById('hubModeTab').style.display = 'none';
-  document.getElementById('listsTab').style.display = 'none';
-  
+  document.getElementById("searchTab").style.display = "none";
+  document.getElementById("hubModeTab").style.display = "none";
+  document.getElementById("listsTab").style.display = "none";
+
   // Show selected tab
-  if (tabName === 'search') {
-    document.getElementById('searchTab').style.display = 'block';
-  } else if (tabName === 'hub') {
-    document.getElementById('hubModeTab').style.display = 'block';
-  } else if (tabName === 'lists') {
-    document.getElementById('listsTab').style.display = 'block';
+  if (tabName === "search") {
+    document.getElementById("searchTab").style.display = "block";
+  } else if (tabName === "hub") {
+    document.getElementById("hubModeTab").style.display = "block";
+  } else if (tabName === "lists") {
+    document.getElementById("listsTab").style.display = "block";
     displayLists();
   }
 }
@@ -107,6 +107,8 @@ function sortData() {
       const ratingA = isNaN(parseInt(a.Rating)) ? 1 : parseInt(a.Rating);
       const ratingB = isNaN(parseInt(b.Rating)) ? 1 : parseInt(b.Rating);
       return sortOrder === "asc" ? ratingA - ratingB : ratingB - ratingA;
+    } else if (sortBy === "id") {
+      return sortOrder === "asc" ? a.ID.localeCompare(b.ID) : b.ID.localeCompare(a.ID);
     }
   });
   displayData(filteredData);
@@ -133,13 +135,13 @@ function createPuzzleCard(puzzle) {
         <div class="action-button sprint-button" data-puzzle-id="${puzzle.ID}" data-world="${puzzle.World}" data-district="${puzzle.District}" data-ward="${puzzle.Ward}" data-plot="${puzzle.Plot}" data-room="${puzzle.Room}" data-tooltip="Copy lifestream command"></div>
       </div>
     </div>
-    ${exportMode ? `<div class="checkbox-container"><input type="checkbox" data-puzzle-id="${puzzle.ID}" ${selectedPuzzles.includes(puzzle.ID) ? 'checked' : ''}></div>` : ""}
+    ${exportMode ? `<div class="checkbox-container"><input type="checkbox" data-puzzle-id="${puzzle.ID}" ${selectedPuzzles.includes(puzzle.ID) ? "checked" : ""}></div>` : ""}
   `;
-  
+
   if (selectedPuzzles.includes(puzzle.ID)) {
     infoCard.classList.add("selected");
   }
-  
+
   return infoCard;
 }
 
@@ -149,24 +151,24 @@ function createPuzzleListItem(puzzle, listName = null) {
   if (isPuzzleCleared(puzzle.ID)) {
     listItem.classList.add("cleared");
   }
-  
+
   const tags = getTags(puzzle);
-  const tagsDisplay = tags ? ` [${tags}]` : '';
-  
-  const deleteButton = listName ? `<button class="list-item-delete" onclick="removePuzzleFromList('${listName}', '${puzzle.ID}')" data-tooltip="Remove from list">×</button>` : '';
-  
+  const tagsDisplay = tags ? ` [${tags}]` : "";
+
+  const deleteButton = listName ? `<button class="list-item-delete" onclick="removePuzzleFromList('${listName}', '${puzzle.ID}')" data-tooltip="Remove from list">×</button>` : "";
+
   listItem.innerHTML = `
     <div class="list-item-info">
       ${getStarRating(puzzle.Rating)} ${puzzle.PuzzleName} by ${puzzle.Builder}${tagsDisplay} (${puzzle.Datacenter}, ${puzzle.World} - ${puzzle.Address})
     </div>
     <div class="list-item-actions">
-      <div class="action-button copy-button" data-puzzle="${JSON.stringify(puzzle).replace(/"/g, '&quot;')}" data-tooltip="Copy formatted text"></div>
+      <div class="action-button copy-button" data-puzzle="${JSON.stringify(puzzle).replace(/"/g, "&quot;")}" data-tooltip="Copy formatted text"></div>
       <div class="action-button jump-button" data-puzzle-id="${puzzle.ID}" data-tooltip="Copy clear command"></div>
       <div class="action-button sprint-button" data-puzzle-id="${puzzle.ID}" data-world="${puzzle.World}" data-district="${puzzle.District}" data-ward="${puzzle.Ward}" data-plot="${puzzle.Plot}" data-room="${puzzle.Room}" data-tooltip="Copy lifestream command"></div>
       ${deleteButton}
     </div>
   `;
-  
+
   return listItem;
 }
 
@@ -186,7 +188,7 @@ function attachActionButtonListeners(container) {
     button.addEventListener("mouseenter", showTooltip);
     button.addEventListener("mouseleave", hideTooltip);
   });
-  
+
   copyButtons.forEach((button) => {
     button.addEventListener("click", handleCopyButtonClick);
     button.addEventListener("mouseenter", showTooltip);
@@ -382,7 +384,7 @@ function displayRouletteModal(puzzles) {
   });
 
   attachActionButtonListeners(modalContent);
-  
+
   const modal = document.getElementById("rouletteModal");
   modal.style.display = "block";
 }
@@ -416,7 +418,7 @@ function copyToClipboard() {
 
 function toggleExportMode() {
   exportMode = !exportMode;
-  
+
   // Update all export mode buttons and button containers
   const searchExportButton = document.getElementById("exportModeButton");
   const searchExportButtons = document.getElementById("exportButtons");
@@ -424,19 +426,19 @@ function toggleExportMode() {
   const hubExportButtons = document.getElementById("hubExportButtons");
   const addToListButton = document.getElementById("addToListButton");
   const hubAddToListButton = document.getElementById("hubAddToListButton");
-  
+
   const buttonText = exportMode ? "Disable Selection Mode" : "Enable Selection Mode";
   const buttonsDisplay = exportMode ? "inline-block" : "none";
   const hasLists = Object.keys(lists).length > 0;
   const addToListDisplay = exportMode && hasLists ? "inline-block" : "none";
-  
+
   searchExportButton.textContent = buttonText;
   searchExportButtons.style.display = buttonsDisplay;
   hubExportButton.textContent = buttonText;
   hubExportButtons.style.display = buttonsDisplay;
   addToListButton.style.display = addToListDisplay;
   hubAddToListButton.style.display = addToListDisplay;
-  
+
   // Refresh current tab display
   if (currentTab === "search") {
     displayData(filteredData);
@@ -506,7 +508,7 @@ function handleSprintButtonClick(event) {
 function handleCopyButtonClick(event) {
   const puzzle = JSON.parse(event.target.dataset.puzzle);
   const tags = getTags(puzzle);
-  const tagsDisplay = tags ? ` [${tags}]` : '';
+  const tagsDisplay = tags ? ` [${tags}]` : "";
   const formattedText = `${getStarRating(puzzle.Rating)} ${puzzle.PuzzleName} by ${puzzle.Builder}${tagsDisplay} (${puzzle.Address})`;
   copyToClipboard(formattedText);
 }
@@ -537,7 +539,7 @@ window.onclick = function (event) {
   const rouletteModal = document.getElementById("rouletteModal");
   const listCreationModal = document.getElementById("listCreationModal");
   const addToListModal = document.getElementById("addToListModal");
-  
+
   if (event.target === rouletteModal) {
     closeModal();
   } else if (event.target === listCreationModal) {
@@ -551,7 +553,7 @@ window.onclick = function (event) {
 function populateHubWorlds() {
   const worldSelect = document.getElementById("hubWorld");
   const worlds = [...new Set(puzzleData.map((puzzle) => puzzle.World))].sort();
-  
+
   worlds.forEach((world) => {
     const option = document.createElement("option");
     option.value = world;
@@ -564,16 +566,14 @@ function updateHubDistricts() {
   const worldSelect = document.getElementById("hubWorld");
   const districtSelect = document.getElementById("hubDistrict");
   const wardSelect = document.getElementById("hubWard");
-  
+
   // Clear existing options
   districtSelect.innerHTML = '<option value="">Select a district</option>';
   wardSelect.innerHTML = '<option value="">Select a ward</option>';
-  
+
   if (worldSelect.value) {
-    const districts = [...new Set(puzzleData
-      .filter((puzzle) => puzzle.World === worldSelect.value)
-      .map((puzzle) => puzzle.District))].sort();
-    
+    const districts = [...new Set(puzzleData.filter((puzzle) => puzzle.World === worldSelect.value).map((puzzle) => puzzle.District))].sort();
+
     districts.forEach((district) => {
       const option = document.createElement("option");
       option.value = district;
@@ -581,7 +581,7 @@ function updateHubDistricts() {
       districtSelect.appendChild(option);
     });
   }
-  
+
   document.getElementById("hubPuzzleContainer").innerHTML = "";
   document.getElementById("hubPuzzlesFound").textContent = "";
 }
@@ -590,15 +590,13 @@ function updateHubWards() {
   const worldSelect = document.getElementById("hubWorld");
   const districtSelect = document.getElementById("hubDistrict");
   const wardSelect = document.getElementById("hubWard");
-  
+
   // Clear existing options
   wardSelect.innerHTML = '<option value="">Select a ward</option>';
-  
+
   if (worldSelect.value && districtSelect.value) {
-    const wards = [...new Set(puzzleData
-      .filter((puzzle) => puzzle.World === worldSelect.value && puzzle.District === districtSelect.value)
-      .map((puzzle) => puzzle.Ward))].sort((a, b) => parseInt(a) - parseInt(b));
-    
+    const wards = [...new Set(puzzleData.filter((puzzle) => puzzle.World === worldSelect.value && puzzle.District === districtSelect.value).map((puzzle) => puzzle.Ward))].sort((a, b) => parseInt(a) - parseInt(b));
+
     wards.forEach((ward) => {
       const option = document.createElement("option");
       option.value = ward;
@@ -606,7 +604,7 @@ function updateHubWards() {
       wardSelect.appendChild(option);
     });
   }
-  
+
   document.getElementById("hubPuzzleContainer").innerHTML = "";
   document.getElementById("hubPuzzlesFound").textContent = "";
 }
@@ -615,15 +613,10 @@ function filterByHub() {
   const worldSelect = document.getElementById("hubWorld");
   const districtSelect = document.getElementById("hubDistrict");
   const wardSelect = document.getElementById("hubWard");
-  
+
   if (worldSelect.value && districtSelect.value && wardSelect.value) {
-    const hubPuzzles = puzzleData.filter((puzzle) => 
-      puzzle.World === worldSelect.value &&
-      puzzle.District === districtSelect.value &&
-      puzzle.Ward === wardSelect.value &&
-      puzzle.Status === "Active"
-    );
-    
+    const hubPuzzles = puzzleData.filter((puzzle) => puzzle.World === worldSelect.value && puzzle.District === districtSelect.value && puzzle.Ward === wardSelect.value && puzzle.Status === "Active");
+
     displayHubPuzzles(hubPuzzles);
   }
 }
@@ -655,7 +648,7 @@ function createListFromSelection() {
     showNotification("No puzzles selected. Please select some puzzles first.", "error");
     return;
   }
-  
+
   openListCreationModal();
 }
 
@@ -663,22 +656,22 @@ function openListCreationModal() {
   const modal = document.getElementById("listCreationModal");
   const description = document.getElementById("listCreationDescription");
   const input = document.getElementById("listNameInput");
-  
-  description.textContent = `Creating a list with ${selectedPuzzles.length} selected puzzle${selectedPuzzles.length === 1 ? '' : 's'}.`;
+
+  description.textContent = `Creating a list with ${selectedPuzzles.length} selected puzzle${selectedPuzzles.length === 1 ? "" : "s"}.`;
   input.value = "";
   modal.style.display = "block";
   input.focus();
-  
+
   // Add keyboard event listeners
-  input.addEventListener('keydown', handleListCreationKeydown);
-  modal.addEventListener('keydown', handleListCreationKeydown);
+  input.addEventListener("keydown", handleListCreationKeydown);
+  modal.addEventListener("keydown", handleListCreationKeydown);
 }
 
 function handleListCreationKeydown(event) {
-  if (event.key === 'Enter') {
+  if (event.key === "Enter") {
     event.preventDefault();
     saveNewList();
-  } else if (event.key === 'Escape') {
+  } else if (event.key === "Escape") {
     event.preventDefault();
     closeListCreationModal();
   }
@@ -687,42 +680,42 @@ function handleListCreationKeydown(event) {
 function closeListCreationModal() {
   const modal = document.getElementById("listCreationModal");
   const input = document.getElementById("listNameInput");
-  
+
   // Remove event listeners
-  input.removeEventListener('keydown', handleListCreationKeydown);
-  modal.removeEventListener('keydown', handleListCreationKeydown);
-  
+  input.removeEventListener("keydown", handleListCreationKeydown);
+  modal.removeEventListener("keydown", handleListCreationKeydown);
+
   modal.style.display = "none";
 }
 
 function saveNewList() {
   const input = document.getElementById("listNameInput");
   const listName = input.value.trim();
-  
+
   if (!listName) {
     showNotification("Please enter a name for your list.", "error");
     return;
   }
-  
+
   if (lists[listName]) {
     if (!confirm(`A list named "${listName}" already exists. Do you want to replace it?`)) {
       return;
     }
   }
-  
+
   const timestamp = new Date().toISOString();
   lists[listName] = {
     name: listName,
     puzzleIds: [...selectedPuzzles],
-    created: timestamp
+    created: timestamp,
   };
-  
+
   localStorage.setItem("puzzleLists", JSON.stringify(lists));
-  showNotification(`List "${listName}" created with ${selectedPuzzles.length} puzzle${selectedPuzzles.length === 1 ? '' : 's'}.`, "success");
+  showNotification(`List "${listName}" created with ${selectedPuzzles.length} puzzle${selectedPuzzles.length === 1 ? "" : "s"}.`, "success");
   clearSelection();
   closeListCreationModal();
-  
-  if (currentTab === 'lists') {
+
+  if (currentTab === "lists") {
     displayLists();
   }
 }
@@ -730,18 +723,18 @@ function saveNewList() {
 function displayLists() {
   const container = document.getElementById("listsContainer");
   container.innerHTML = "";
-  
+
   const listNames = Object.keys(lists);
   if (listNames.length === 0) {
     container.innerHTML = '<p style="color: #ad9462;">No lists created yet. Use Selection Mode to create lists.</p>';
     return;
   }
-  
+
   listNames.forEach((listName) => {
     const list = lists[listName];
     const listSection = document.createElement("div");
     listSection.className = "list-section";
-    
+
     const listHeader = document.createElement("div");
     listHeader.className = "list-header";
     listHeader.innerHTML = `
@@ -751,30 +744,30 @@ function displayLists() {
         <button onclick="deleteList('${listName}')">Delete</button>
       </div>
     `;
-    
+
     const listItems = document.createElement("div");
     listItems.className = "list-items";
-    listItems.id = `list-${listName.replace(/\s+/g, '-')}`;
-    
+    listItems.id = `list-${listName.replace(/\s+/g, "-")}`;
+
     // Add puzzles to the list
     list.puzzleIds.forEach((puzzleId) => {
-      const puzzle = puzzleData.find(p => p.ID === puzzleId);
+      const puzzle = puzzleData.find((p) => p.ID === puzzleId);
       if (puzzle) {
         const listItem = createPuzzleListItem(puzzle, listName);
         listItems.appendChild(listItem);
       }
     });
-    
+
     listHeader.addEventListener("click", (e) => {
-      if (!e.target.closest('button')) {
+      if (!e.target.closest("button")) {
         listItems.classList.toggle("expanded");
       }
     });
-    
+
     listSection.appendChild(listHeader);
     listSection.appendChild(listItems);
     container.appendChild(listSection);
-    
+
     attachActionButtonListeners(listItems);
   });
 }
@@ -788,27 +781,27 @@ function deleteList(listName) {
 }
 
 // Notification System
-function showNotification(message, type = 'info') {
+function showNotification(message, type = "info") {
   // Remove any existing notifications
-  const existingNotification = document.querySelector('.notification');
+  const existingNotification = document.querySelector(".notification");
   if (existingNotification) {
     existingNotification.remove();
   }
-  
-  const notification = document.createElement('div');
+
+  const notification = document.createElement("div");
   notification.className = `notification ${type}`;
   notification.textContent = message;
-  
+
   document.body.appendChild(notification);
-  
+
   // Trigger animation
   setTimeout(() => {
-    notification.classList.add('show');
+    notification.classList.add("show");
   }, 10);
-  
+
   // Auto remove after 4 seconds
   setTimeout(() => {
-    notification.classList.remove('show');
+    notification.classList.remove("show");
     setTimeout(() => {
       if (notification.parentNode) {
         notification.remove();
@@ -820,18 +813,18 @@ function showNotification(message, type = 'info') {
 function copyList(listName) {
   const list = lists[listName];
   if (!list) return;
-  
+
   let formattedText = `**${listName}**\n\n`;
-  
+
   list.puzzleIds.forEach((puzzleId) => {
-    const puzzle = puzzleData.find(p => p.ID === puzzleId);
+    const puzzle = puzzleData.find((p) => p.ID === puzzleId);
     if (puzzle) {
       const tags = getTags(puzzle);
-      const tagsDisplay = tags ? ` [${tags}]` : '';
+      const tagsDisplay = tags ? ` [${tags}]` : "";
       formattedText += `- ${puzzleId}: ${getStarRating(puzzle.Rating)} ${puzzle.PuzzleName} by ${puzzle.Builder}${tagsDisplay} (${puzzle.Address})\n`;
     }
   });
-  
+
   copyToClipboard(formattedText);
   showNotification(`List "${listName}" copied to clipboard`, "success");
 }
@@ -842,57 +835,60 @@ function exportAllLists() {
     showNotification("No lists to export", "error");
     return;
   }
-  
+
   let exportData = "**All Puzzle Lists**\n\n";
-  
+
   listNames.forEach((listName) => {
     const list = lists[listName];
     exportData += `**${listName}**\n`;
-    
+
     list.puzzleIds.forEach((puzzleId) => {
-      const puzzle = puzzleData.find(p => p.ID === puzzleId);
+      const puzzle = puzzleData.find((p) => p.ID === puzzleId);
       if (puzzle) {
         const tags = getTags(puzzle);
-        const tagsDisplay = tags ? ` [${tags}]` : '';
+        const tagsDisplay = tags ? ` [${tags}]` : "";
         exportData += `- ${puzzleId}: ${getStarRating(puzzle.Rating)} ${puzzle.PuzzleName} by ${puzzle.Builder}${tagsDisplay} (${puzzle.Address})\n`;
       }
     });
-    
+
     exportData += "\n";
   });
-  
+
   copyToClipboard(exportData);
   showNotification(`All ${listNames.length} lists exported to clipboard`, "success");
 }
 
 function importListFromClipboard() {
-  navigator.clipboard.readText().then(text => {
-    // Try to parse as individual list format first
-    if (parseIndividualList(text)) {
-      return;
-    }
-    
-    // Try to parse as export all format
-    if (parseAllListsFormat(text)) {
-      return;
-    }
-    
-    // Try to parse as JSON format (backup/manual)
-    parseJSONFormat(text);
-  }).catch(() => {
-    // Silently fail as requested - no error messages
-  });
+  navigator.clipboard
+    .readText()
+    .then((text) => {
+      // Try to parse as individual list format first
+      if (parseIndividualList(text)) {
+        return;
+      }
+
+      // Try to parse as export all format
+      if (parseAllListsFormat(text)) {
+        return;
+      }
+
+      // Try to parse as JSON format (backup/manual)
+      parseJSONFormat(text);
+    })
+    .catch(() => {
+      // Silently fail as requested - no error messages
+    });
 }
 
 function parseIndividualList(text) {
   // Match format: **ListName** followed by lines with "- ID: puzzle info"
   const listNameMatch = text.match(/^\*\*(.+?)\*\*/);
   if (!listNameMatch) return false;
-  
+
   const listName = listNameMatch[1].trim();
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const puzzleIds = [];
-  
+
   let foundPuzzles = false;
   for (const line of lines) {
     const puzzleMatch = line.match(/^-\s+(\d{5}):/);
@@ -901,80 +897,80 @@ function parseIndividualList(text) {
       foundPuzzles = true;
     }
   }
-  
+
   if (foundPuzzles && puzzleIds.length > 0) {
     // Validate that puzzles exist
-    const validPuzzleIds = puzzleIds.filter(id => puzzleData.find(p => p.ID === id));
-    
+    const validPuzzleIds = puzzleIds.filter((id) => puzzleData.find((p) => p.ID === id));
+
     if (validPuzzleIds.length > 0) {
       const timestamp = new Date().toISOString();
       lists[listName] = {
         name: listName,
         puzzleIds: validPuzzleIds,
-        created: timestamp
+        created: timestamp,
       };
-      
+
       localStorage.setItem("puzzleLists", JSON.stringify(lists));
       showNotification(`Imported list "${listName}" with ${validPuzzleIds.length} puzzles`, "success");
-      
-      if (currentTab === 'lists') {
+
+      if (currentTab === "lists") {
         displayLists();
       }
       return true;
     }
   }
-  
+
   return false;
 }
 
 function parseAllListsFormat(text) {
   // Match format: **All Puzzle Lists** followed by multiple **ListName** sections
-  if (!text.includes('**All Puzzle Lists**')) return false;
-  
+  if (!text.includes("**All Puzzle Lists**")) return false;
+
   const sections = text.split(/\*\*([^*]+)\*\*/);
   let importedCount = 0;
-  
+
   for (let i = 2; i < sections.length; i += 2) {
     const listName = sections[i - 1].trim();
     const listContent = sections[i];
-    
-    if (listName === 'All Puzzle Lists') continue;
-    
-    const lines = listContent.split('\n');
+
+    if (listName === "All Puzzle Lists") continue;
+
+    const lines = listContent.split("\n");
     const puzzleIds = [];
-    
+
     for (const line of lines) {
       const puzzleMatch = line.match(/^-\s+(\d{5}):/);
       if (puzzleMatch) {
         puzzleIds.push(puzzleMatch[1]);
       }
     }
-    
+
     if (puzzleIds.length > 0) {
-      const validPuzzleIds = puzzleIds.filter(id => puzzleData.find(p => p.ID === id));
-      
+      const validPuzzleIds = puzzleIds.filter((id) => puzzleData.find((p) => p.ID === id));
+
       if (validPuzzleIds.length > 0) {
         const timestamp = new Date().toISOString();
         lists[listName] = {
           name: listName,
           puzzleIds: validPuzzleIds,
-          created: timestamp
+          created: timestamp,
         };
         importedCount++;
       }
     }
   }
-  
+
   if (importedCount > 0) {
     localStorage.setItem("puzzleLists", JSON.stringify(lists));
     showNotification(`Imported ${importedCount} lists`, "success");
-    
-    if (currentTab === 'lists') {
+
+    if (currentTab === "lists") {
       displayLists();
     }
     return true;
   }
-  
+
   return false;
 }
 
@@ -982,27 +978,27 @@ function parseJSONFormat(text) {
   try {
     const importedLists = JSON.parse(text);
     let importedCount = 0;
-    
+
     for (const [listName, listData] of Object.entries(importedLists)) {
       if (listData.puzzleIds && Array.isArray(listData.puzzleIds)) {
-        const validPuzzleIds = listData.puzzleIds.filter(id => puzzleData.find(p => p.ID === id));
-        
+        const validPuzzleIds = listData.puzzleIds.filter((id) => puzzleData.find((p) => p.ID === id));
+
         if (validPuzzleIds.length > 0) {
           lists[listName] = {
             name: listData.name || listName,
             puzzleIds: validPuzzleIds,
-            created: listData.created || new Date().toISOString()
+            created: listData.created || new Date().toISOString(),
           };
           importedCount++;
         }
       }
     }
-    
+
     if (importedCount > 0) {
       localStorage.setItem("puzzleLists", JSON.stringify(lists));
       showNotification(`Imported ${importedCount} lists from JSON`, "success");
-      
-      if (currentTab === 'lists') {
+
+      if (currentTab === "lists") {
         displayLists();
       }
       return true;
@@ -1010,7 +1006,7 @@ function parseJSONFormat(text) {
   } catch (e) {
     // Silently fail
   }
-  
+
   return false;
 }
 
@@ -1019,14 +1015,14 @@ function showAddToListModal() {
     showNotification("No puzzles selected. Please select some puzzles first.", "error");
     return;
   }
-  
+
   const modal = document.getElementById("addToListModal");
   const description = document.getElementById("addToListDescription");
   const container = document.getElementById("existingListsContainer");
-  
-  description.textContent = `Add ${selectedPuzzles.length} selected puzzle${selectedPuzzles.length === 1 ? '' : 's'} to an existing list:`;
+
+  description.textContent = `Add ${selectedPuzzles.length} selected puzzle${selectedPuzzles.length === 1 ? "" : "s"} to an existing list:`;
   container.innerHTML = "";
-  
+
   const listNames = Object.keys(lists);
   listNames.forEach((listName) => {
     const list = lists[listName];
@@ -1038,14 +1034,14 @@ function showAddToListModal() {
         <p>${list.puzzleIds.length} puzzles</p>
       </div>
     `;
-    
+
     listItem.addEventListener("click", () => {
       addToExistingList(listName);
     });
-    
+
     container.appendChild(listItem);
   });
-  
+
   modal.style.display = "block";
 }
 
@@ -1057,23 +1053,23 @@ function closeAddToListModal() {
 function addToExistingList(listName) {
   const list = lists[listName];
   if (!list) return;
-  
+
   // Add selected puzzles that aren't already in the list
-  const newPuzzles = selectedPuzzles.filter(id => !list.puzzleIds.includes(id));
-  
+  const newPuzzles = selectedPuzzles.filter((id) => !list.puzzleIds.includes(id));
+
   if (newPuzzles.length === 0) {
     showNotification("All selected puzzles are already in this list", "error");
     return;
   }
-  
+
   list.puzzleIds.push(...newPuzzles);
   localStorage.setItem("puzzleLists", JSON.stringify(lists));
-  
-  showNotification(`Added ${newPuzzles.length} puzzle${newPuzzles.length === 1 ? '' : 's'} to "${listName}"`, "success");
+
+  showNotification(`Added ${newPuzzles.length} puzzle${newPuzzles.length === 1 ? "" : "s"} to "${listName}"`, "success");
   clearSelection();
   closeAddToListModal();
-  
-  if (currentTab === 'lists') {
+
+  if (currentTab === "lists") {
     displayLists();
   }
 }
@@ -1081,11 +1077,11 @@ function addToExistingList(listName) {
 function removePuzzleFromList(listName, puzzleId) {
   const list = lists[listName];
   if (!list) return;
-  
+
   const index = list.puzzleIds.indexOf(puzzleId);
   if (index !== -1) {
     list.puzzleIds.splice(index, 1);
-    
+
     // If list is empty, delete it
     if (list.puzzleIds.length === 0) {
       delete lists[listName];
@@ -1093,7 +1089,7 @@ function removePuzzleFromList(listName, puzzleId) {
     } else {
       showNotification("Puzzle removed from list", "success");
     }
-    
+
     localStorage.setItem("puzzleLists", JSON.stringify(lists));
     displayLists();
   }

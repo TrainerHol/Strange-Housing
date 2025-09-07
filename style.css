@@ -233,6 +233,10 @@ h1 {
   background-image: url("img/sprint.png");
 }
 
+.copy-db-button {
+  background-image: url("img/lb.png");
+}
+
 .tooltip {
   position: absolute;
   background-color: #ad9462;

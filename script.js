@@ -9,6 +9,7 @@ let clearData = [];
 let currentTab = "search";
 let lists = JSON.parse(localStorage.getItem("puzzleLists") || "{}");
 let searchDebounceTimer = null;
+let devModeEnabled = false;
 
 function init() {
   updateDiscordIdDisplay();
@@ -33,6 +34,10 @@ function init() {
     });
 
   fetchClearData();
+
+  // Add dev mode listener to exclude input
+  const excludeInput = document.getElementById("excludeInput");
+  excludeInput.addEventListener("keydown", handleExcludeInputKeydown);
 }
 
 function switchTab(tabName) {
@@ -217,6 +222,11 @@ function displayData(data) {
   }
 
   attachActionButtonListeners(container);
+
+  // Add dev mode buttons if enabled
+  if (devModeEnabled) {
+    addDevModeButtonsToExistingCards();
+  }
 }
 
 function openDiscordIdModal() {
@@ -336,6 +346,58 @@ function debouncedApplyFilters() {
   searchDebounceTimer = setTimeout(() => {
     applyFilters();
   }, 300);
+}
+
+function handleExcludeInputKeydown(event) {
+  if (event.key === "Enter" && event.target.value.toLowerCase() === "/devmode") {
+    event.preventDefault();
+    devModeEnabled = !devModeEnabled;
+    event.target.value = "";
+    toggleDevModeButton();
+  }
+}
+
+function toggleDevModeButton() {
+  if (devModeEnabled) {
+    // Add dev mode buttons to all existing cards
+    addDevModeButtonsToExistingCards();
+  } else {
+    // Remove all dev mode buttons
+    const devButtons = document.querySelectorAll(".copy-db-button");
+    devButtons.forEach((button) => button.remove());
+  }
+}
+
+function addDevModeButtonsToExistingCards() {
+  const actionButtons = document.querySelectorAll(".action-buttons");
+
+  actionButtons.forEach((buttonContainer) => {
+    // Check if dev button already exists
+    if (buttonContainer.querySelector(".copy-db-button")) {
+      return;
+    }
+
+    const devButton = document.createElement("div");
+    devButton.className = "action-button copy-db-button";
+    devButton.dataset.tooltip = "Copy DB Name";
+
+    // Get puzzle data from the parent card
+    const infoCard = buttonContainer.closest(".info-card");
+    const puzzleIdElement = infoCard.querySelector(".puzzle-id");
+    const puzzleId = puzzleIdElement.textContent;
+
+    // Find the puzzle data
+    const puzzle = puzzleData.find((p) => p.ID === puzzleId);
+    if (puzzle) {
+      devButton.dataset.puzzle = JSON.stringify(puzzle);
+    }
+
+    devButton.addEventListener("click", handleCopyDBClick);
+    devButton.addEventListener("mouseenter", showTooltip);
+    devButton.addEventListener("mouseleave", hideTooltip);
+
+    buttonContainer.appendChild(devButton);
+  });
 }
 
 function updatePuzzlesFound() {
@@ -522,6 +584,24 @@ function handleCopyButtonClick(event) {
   copyToClipboard(formattedText);
 }
 
+function sanitizeFilename(str) {
+  // Remove or replace characters that aren't allowed in filenames
+  return str
+    .replace(/[<>:"/\\|?*]/g, "") // Remove forbidden characters
+    .replace(/\s+/g, "_") // Replace spaces with underscores
+    .replace(/[^\w\-_.]/g, "") // Keep only word characters, hyphens, underscores, and dots
+    .replace(/_+/g, "_") // Replace multiple underscores with single underscore
+    .replace(/^_|_$/g, ""); // Remove leading/trailing underscores
+}
+
+function handleCopyDBClick(event) {
+  const puzzle = JSON.parse(event.target.dataset.puzzle);
+  const sanitizedPuzzleName = sanitizeFilename(puzzle.PuzzleName);
+  const sanitizedBuilder = sanitizeFilename(puzzle.Builder);
+  const dbName = `${puzzle.ID}_${sanitizedPuzzleName}_by_${sanitizedBuilder}`;
+  copyToClipboard(dbName);
+}
+
 function copyToClipboard(text) {
   const tempElement = document.createElement("textarea");
   tempElement.value = text;
@@ -649,6 +729,11 @@ function displayHubPuzzles(data) {
   }
 
   attachActionButtonListeners(container);
+
+  // Add dev mode buttons if enabled
+  if (devModeEnabled) {
+    addDevModeButtonsToExistingCards();
+  }
 }
 
 // Lists Functions

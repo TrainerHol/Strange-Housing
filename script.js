@@ -138,6 +138,7 @@ function createPuzzleCard(puzzle) {
     <div class="card-footer">
       <span class="puzzle-id">${puzzle.ID}</span>
       <div class="action-buttons">
+        <div class="action-button copy-button" data-puzzle="${JSON.stringify(puzzle).replace(/"/g, "&quot;")}" data-tooltip="Copy formatted text"></div>
         <div class="action-button jump-button" data-puzzle-id="${puzzle.ID}" data-tooltip="Copy clear command"></div>
         <div class="action-button sprint-button" data-puzzle-id="${puzzle.ID}" data-world="${puzzle.World}" data-district="${puzzle.District}" data-ward="${puzzle.Ward}" data-plot="${puzzle.Plot}" data-room="${puzzle.Room}" data-tooltip="Copy lifestream command"></div>
       </div>

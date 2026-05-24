@@ -581,7 +581,7 @@ function handleCopyButtonClick(event) {
   const puzzle = JSON.parse(event.target.dataset.puzzle);
   const tags = getTags(puzzle);
   const tagsDisplay = tags ? ` [${tags}]` : "";
-  const formattedText = `${getStarRating(puzzle.Rating)} ${puzzle.PuzzleName} by ${puzzle.Builder}${tagsDisplay} (${puzzle.Address})`;
+  const formattedText = `${puzzle.ID}: ${getStarRating(puzzle.Rating)} ${puzzle.PuzzleName} by ${puzzle.Builder}${tagsDisplay} (${puzzle.Address})`;
   copyToClipboard(formattedText);
 }
 

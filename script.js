@@ -14,7 +14,7 @@ let devModeEnabled = false;
 function init() {
   updateDiscordIdDisplay();
 
-  fetch("sh-dump/puzzles.json")
+  fetch("https://raw.githubusercontent.com/TrainerHol/sh-dump/master/puzzles.json")
     .then((response) => response.json())
     .then((data) => {
       puzzleData = data.filter((puzzle) => puzzle.ID !== "00000" && puzzle.Datacenter !== "-" && puzzle.Datacenter !== "");
@@ -67,7 +67,7 @@ function switchTab(tabName) {
 
 function fetchClearData() {
   if (discordId) {
-    fetch("sh-dump/clears.json")
+    fetch("https://raw.githubusercontent.com/TrainerHol/sh-dump/master/clears.json")
       .then((response) => response.json())
       .then((data) => {
         clearData = data.filter((clear) => clear.jumper === discordId);
